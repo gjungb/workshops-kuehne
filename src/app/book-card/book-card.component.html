@@ -4,6 +4,6 @@
 
 <h2 [style]="customStyle">{{ content?.author }}</h2>
 
-<button>Details</button>
+<button (click)="handleDetailClick($event)">Details</button>
 
-<p>{{ content?.abstract }}</p>
+<p *ngIf="content?.abstract">{{ content?.abstract }}</p>

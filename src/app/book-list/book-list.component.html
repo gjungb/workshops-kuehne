@@ -1,0 +1,8 @@
+<p>book-list works!</p>
+
+<ol>
+  <li *ngFor="let book of books">
+    <app-book-card (detailClick)="goToBookDetails($event)" [appBook]="book"></app-book-card>
+  </li>
+</ol>
+

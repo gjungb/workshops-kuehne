@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Book} from "../model/book";
 
 @Component({
@@ -13,6 +13,9 @@ export class BookCardComponent {
     author: 'Someone'
   };
 
+  @Output()
+  detailClick = new EventEmitter<Book>();
+
 
   customStyle = {
     backgroundColor: 'red'
@@ -20,4 +23,13 @@ export class BookCardComponent {
 
   constructor() { }
 
+  /**
+   *
+   *
+   * @param ev
+   */
+  handleDetailClick(ev: MouseEvent) {
+    console.log('clicked', ev.clientX);
+    this.detailClick.emit(this.content);
+  }
 }
