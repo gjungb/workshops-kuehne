@@ -1,0 +1,8 @@
+<p>book-edit works!</p>
+
+<form [formGroup]="form">
+  <input type="text" formControlName="title">
+  <input type="text" formControlName="isbn">
+</form>
+
+<pre *ngIf="false"><code>{{ form.errors | json }}</code></pre>
