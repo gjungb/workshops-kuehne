@@ -1,9 +1,13 @@
 <p>book-card works!</p>
 
-<h1>{{ content?.title }}</h1>
+<h1>{{ content?.title | uppercase }}</h1>
 
 <h2 [style]="customStyle">{{ content?.author }}</h2>
+
+<p>{{ content?.isbn | appIsbn }}</p>
 
 <button (click)="handleDetailClick($event)">Details</button>
 
 <p *ngIf="content?.abstract">{{ content?.abstract }}</p>
+
+<pre><code>{{ content | json }}</code></pre>

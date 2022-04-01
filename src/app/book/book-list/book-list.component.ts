@@ -9,15 +9,26 @@ import {
 import { Book } from '../model/book';
 import { BookCardComponent } from '../book-card/book-card.component';
 import { BookApiService } from '../shared/book-api.service';
-import { Subscription, takeUntil, tap, timer } from 'rxjs';
+import {
+  finalize,
+  Observable,
+  Subscription,
+  takeUntil,
+  tap,
+  timer,
+} from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-book-list',
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.scss'],
 })
+// stateful
 export class BookListComponent implements OnInit, OnDestroy {
   books?: Book[];
+
+  books$!: Observable<Book[]>;
 
   @ViewChildren(BookCardComponent)
   cards!: QueryList<BookCardComponent>;
@@ -26,7 +37,10 @@ export class BookListComponent implements OnInit, OnDestroy {
 
   private destroy$ = new EventEmitter<void>();
 
-  constructor(private readonly api: BookApiService) {}
+  constructor(
+    private readonly api: BookApiService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit(): void {
     // emit values over time
@@ -37,15 +51,15 @@ export class BookListComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.api.getBooks().subscribe({
-      // effect
-      next: (value) => (this.books = value),
-      complete: () => console.log('done'),
-    });
+    this.books$ = this.api
+      .getBooks()
+      .pipe(finalize(() => console.log('finalized')));
   }
 
-  goToBookDetails(book: Book) {
+  goToBookDetails(book: Book): void {
+    // effect
     console.log(book);
+    this.router.navigate(['/books', book.isbn]).then((res) => console.log(res));
   }
 
   ngOnDestroy(): void {
