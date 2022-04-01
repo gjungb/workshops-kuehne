@@ -26,8 +26,6 @@ import { Router } from '@angular/router';
 })
 // stateful
 export class BookListComponent implements OnInit, OnDestroy {
-  books?: Book[];
-
   books$!: Observable<Book[]>;
 
   @ViewChildren(BookCardComponent)
@@ -51,9 +49,9 @@ export class BookListComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.books$ = this.api
-      .getBooks()
-      .pipe(finalize(() => console.log('finalized')));
+    this.books$ = this.api.books$.pipe(
+      finalize(() => console.log('finalized'))
+    );
   }
 
   goToBookDetails(book: Book): void {

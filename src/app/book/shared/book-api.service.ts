@@ -1,6 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
 import { Book } from '../model/book';
-import { catchError, delay, Observable, of, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  delay,
+  first,
+  Observable,
+  of,
+  tap,
+} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
@@ -27,15 +35,30 @@ export class BookApiService {
     },
   ];
 
+  /**
+   * The RxJS Subject containing the current state, i.e. the list of Books
+   *
+   * @link https://rxjs.dev/guide/subject#behaviorsubject
+   * @private
+   */
+  private readonly books$$ = new BehaviorSubject<Book[]>([]);
+
+  /**
+   * The Observable that can be subscribed to, e.g. by Component(s)
+   */
+  readonly books$ = this.books$$.asObservable();
+
   constructor(
     private readonly http: HttpClient,
     @Inject('BASE_URL') private readonly url: string
-  ) {}
+  ) {
+    this.getBooks().pipe(first()).subscribe();
+  }
 
   getBooks(): Observable<Book[]> {
     return this.http.get<Book[]>(this.url).pipe(
-      tap((value) => console.log(value.length)),
       delay(3_000),
+      tap((value) => this.books$$.next(value)),
       catchError((err, orig) => {
         return of(this.books);
       })
